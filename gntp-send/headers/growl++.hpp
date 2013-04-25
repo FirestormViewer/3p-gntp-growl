@@ -34,6 +34,6 @@ class GROWL_CPP_EXPORT Growl
 		void Notify(const char *const notification, const char *const title, const char* const message);
 		void Notify(const char *const notification, const char *const title, const char* const message, const char *const url, const char *const icon);
 
+		bool isConnected() const
+		{ return mConnected; }
 };
-
-
