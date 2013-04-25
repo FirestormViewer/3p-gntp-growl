@@ -22,6 +22,9 @@ class GROWL_CPP_EXPORT Growl
 		char *password;
 		char *application;
 		Growl_Protocol protocol;
+
+		bool mConnected;
+
 		void Register(const char **const _notifications, const int _notifications_count, const char* const icon = NULL );
 	public:
 		Growl(const Growl_Protocol _protocol, const char *const _password, const char* const _appliciation, const char **const _notifications, const int _notifications_count);

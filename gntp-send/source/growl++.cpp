@@ -27,14 +27,16 @@ Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const ch
 
 void Growl::Register(const char **const notifications, const int notifications_count , const char *const icon )
 {
+	int res;
 	if( protocol == GROWL_TCP )
 	{
-		growl_tcp_register( server , application , notifications , notifications_count , password , icon );
+		res = growl_tcp_register( server , application , notifications , notifications_count , password , icon );
 	}
 	else
 	{
-		growl_udp_register( server , application , notifications , notifications_count , password );
+		res = growl_udp_register( server , application , notifications , notifications_count , password );
 	}
+	mConnected = (res==0);
 }
 
 
@@ -63,6 +65,9 @@ void Growl::Notify(const char *const notification, const char *const title, cons
 
 void Growl::Notify(const char *const notification, const char *const title, const char* const message, const char *const url, const char *const icon)
 {
+	if( !mConnected )
+		return;
+
 	if( protocol == GROWL_TCP )
         {
                 growl_tcp_notify( server , application , notification , title , message , password , url , icon );
