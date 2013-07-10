@@ -27,14 +27,23 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
     case "$AUTOBUILD_PLATFORM" in
         "windows")
             load_vsvars
-			cmake . -G "Visual Studio 10"
 
-			build_sln Project.sln "RelWithDebInfo|Win32" growl
-			build_sln Project.sln "RelWithDebInfo|Win32" growl++
+            if [ "${AUTOBUILD_ARCH}" == "x64" ]
+            then
+				cmake . -G "Visual Studio 10 Win64"
 
-            mkdir -p "${stage}/lib/debug"
-            mkdir -p "${stage}/lib/release"
-            mkdir -p "${stage}/include/Growl"
+				build_sln Project.sln "RelWithDebInfo|x64" growl
+				build_sln Project.sln "RelWithDebInfo|x64" growl++
+			else
+				cmake . -G "Visual Studio 10"
+
+				build_sln Project.sln "RelWithDebInfo|Win32" growl
+				build_sln Project.sln "RelWithDebInfo|Win32" growl++
+			fi
+
+			mkdir -p "${stage}/lib/debug"
+			mkdir -p "${stage}/lib/release"
+			mkdir -p "${stage}/include/Growl"
 
 			cp RelWithDebInfo/*.dll "${stage}/lib/debug"
 			cp RelWithDebInfo/*.lib "${stage}/lib/debug"
