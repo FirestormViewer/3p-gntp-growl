@@ -43,7 +43,6 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
 
 			mkdir -p "${stage}/lib/debug"
 			mkdir -p "${stage}/lib/release"
-			mkdir -p "${stage}/include/Growl"
 
 			cp RelWithDebInfo/*.dll "${stage}/lib/debug"
 			cp RelWithDebInfo/*.lib "${stage}/lib/debug"
@@ -51,14 +50,23 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
 			cp RelWithDebInfo/*.dll "${stage}/lib/release"
 			cp RelWithDebInfo/*.lib "${stage}/lib/release"
 			cp RelWithDebInfo/*.pdb "${stage}/lib/release"
-            cp headers/{growl++.hpp,growl.h} "${stage}/include/Growl"
         ;;
         "darwin")
+            libdir="${stage}/lib"
+            mkdir -p "$libdir"/{debug,release}
+            cmake .
+            make
+
+            cp *.dylib "${libdir}/debug"
+            cp *.dylib "${libdir}/release"
         ;;            
 			
         "linux")
         ;;
     esac
+
+    mkdir -p "${stage}/include/Growl"
+    cp headers/{growl++.hpp,growl.h} "${stage}/include/Growl"
     mkdir -p "$stage/LICENSES"
     cp LICENSE "$stage/LICENSES/gntp-growl.txt"
 popd

@@ -17,6 +17,10 @@ if( WIN32 )
   link_libraries ( ws2_32 )
 endif( WIN32 )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
+endif()
+
 set( GROWL_NTP_C_SRC
         source/growl.c
         source/tcp.c
