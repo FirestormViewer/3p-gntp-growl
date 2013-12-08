@@ -59,7 +59,23 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
 
             cp *.dylib "${libdir}/debug"
             cp *.dylib "${libdir}/release"
-        ;;            
+
+			# Ugly, but get rid of static paths
+			install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
+				"${stage}/lib/debug/libgrowl.dylib"
+			install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
+				"${stage}/lib/release/libgrowl.dylib"
+			install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
+				"${stage}/lib/debug/libgrowl++.dylib"
+			install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
+				"${stage}/lib/release/libgrowl++.dylib"
+			install_name_tool -change $(pwd)/libgrowl.dylib \
+				@executable_path/../Resources/libgrowl.dylib \
+				"${stage}/lib/debug/libgrowl++.dylib"
+			install_name_tool -change $(pwd)/libgrowl.dylib \
+				@executable_path/../Resources/libgrowl.dylib \
+				"${stage}/lib/release/libgrowl++.dylib"
+        ;;
 			
         "linux")
         ;;
