@@ -23,20 +23,18 @@ eval "$("$AUTOBUILD" source_environment)"
 set -x
 
 stage="$(pwd)/stage"
+echo "1.0" > "${stage}/VERSION.txt"
 pushd "${GNTP_SEND_SOURCE_DIR}"
     case "$AUTOBUILD_PLATFORM" in
         "windows")
             load_vsvars
 
+			cmake . -G "${ND_CMAKE_GENERATOR}"
             if [ "${AUTOBUILD_ARCH}" == "x64" ]
             then
-				cmake . -G "Visual Studio 10 Win64"
-
 				build_sln Project.sln "RelWithDebInfo|x64" growl
 				build_sln Project.sln "RelWithDebInfo|x64" growl++
 			else
-				cmake . -G "Visual Studio 10"
-
 				build_sln Project.sln "RelWithDebInfo|Win32" growl
 				build_sln Project.sln "RelWithDebInfo|Win32" growl++
 			fi
@@ -46,10 +44,10 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
 
 			cp RelWithDebInfo/*.dll "${stage}/lib/debug"
 			cp RelWithDebInfo/*.lib "${stage}/lib/debug"
-			cp RelWithDebInfo/*.pdb "${stage}/lib/debug"
+#			cp RelWithDebInfo/*.pdb "${stage}/lib/debug"
 			cp RelWithDebInfo/*.dll "${stage}/lib/release"
 			cp RelWithDebInfo/*.lib "${stage}/lib/release"
-			cp RelWithDebInfo/*.pdb "${stage}/lib/release"
+#			cp RelWithDebInfo/*.pdb "${stage}/lib/release"
         ;;
         "darwin")
             libdir="${stage}/lib"
