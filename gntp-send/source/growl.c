@@ -13,6 +13,8 @@
 #include "tcp.h"
 #include "growl.h"
 
+#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "growl.c: " ## __FUNCTION__, 2 ); }
+
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
 	int n, l;
@@ -31,6 +33,7 @@ int growl_init_ = 0;
 
 int growl_init()
 {
+	GROWL_LOG_FUNCENTER(  )
         if( growl_init_ == 0)
         {
                 #ifdef _WIN32
@@ -50,6 +53,7 @@ int growl_init()
 
 void growl_shutdown()
 {
+	GROWL_LOG_FUNCENTER(  )
         if( growl_init_ == 1 )
         {
                 #ifdef _WIN32
@@ -121,6 +125,7 @@ char *growl_generate_authheader_alloc(const char*const password)
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count ,
 		const char *const password, const char* const icon  )
 {
+	GROWL_LOG_FUNCENTER(  )
 	int sock = -1;
 	int i=0;
 	char *authheader;
@@ -246,6 +251,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon)
 {
+	GROWL_LOG_FUNCENTER(  )
 	int sock = -1;
 
 	char *authheader = growl_generate_authheader_alloc(password);
@@ -361,6 +367,7 @@ leave:
 int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {		
+	GROWL_LOG_FUNCENTER(  )
 	int rc = growl_tcp_register(  server ,  appname ,  (const char **const)&notify , 1 , password, icon  );
 	if( rc == 0 )
 	{
@@ -390,6 +397,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
+	GROWL_LOG_FUNCENTER(  )
 	int register_header_length = 22+strlen(appname);
 	unsigned char *data;
 	int pointer = 0;
@@ -456,6 +464,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password )
 {
+	GROWL_LOG_FUNCENTER(  )
 	int notify_header_length = 28 + strlen(appname)+strlen(notify)+strlen(message)+strlen(title);
 	unsigned char *data = (unsigned char*)malloc(notify_header_length);
 	int pointer = 0;
@@ -513,6 +522,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {
+	GROWL_LOG_FUNCENTER(  )
 	int rc = growl_udp_register(  server ,  appname ,  (const char **const)&notify , 1 , password  );
 	if( rc == 0 )
 	{
@@ -551,3 +561,15 @@ void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
 	free(ptr);
 }
 #endif
+
+tLogSink sLogSink;
+GROWL_EXPORT void growl_set_log_sink( tLogSink aLogSink )
+{
+	sLogSink = aLogSink;
+}
+
+GROWL_EXPORT void growl_do_log( char const *aMessage, int aLevel )
+{
+	if( sLogSink )
+		sLogSink( aMessage, aLevel );
+}

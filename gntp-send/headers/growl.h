@@ -18,8 +18,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif 
-
-
+#define GROWL_HAS_LOG
+typedef void (__cdecl *tLogSink)( char const *aMessage, int aLevel );
+GROWL_EXPORT void growl_set_log_sink( tLogSink );
+GROWL_EXPORT void growl_do_log( char const*, int );
+	
 GROWL_EXPORT int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url );
 GROWL_EXPORT int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,

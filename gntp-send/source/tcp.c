@@ -17,13 +17,18 @@
 
 int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr  );
 
+#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "tcp.c: " ## __FUNCTION__, 3 ); }
+#define GROWL_LOG( Message ) { growl_do_log( "tcp.c: " ## __FUNCTION__ ## ": " ## Message , 3 ); }
+
 void growl_tcp_write_raw( int sock, const unsigned char * data, const int data_length )
 {
+	GROWL_LOG_FUNCENTER(  )
 	send(sock, data, data_length, 0);
 }
 
 void growl_tcp_write( int sock , const char *const format , ... ) 
 {
+	GROWL_LOG_FUNCENTER(  )
 	int length;
 	char *output;
 	char *stop;
@@ -56,6 +61,7 @@ void growl_tcp_write( int sock , const char *const format , ... )
 }
 
 char *growl_tcp_read(int sock) {
+	GROWL_LOG_FUNCENTER(  )
 	const int growsize = 80;
 	char c = 0;
 	char* line = (char*) malloc(growsize);
@@ -97,22 +103,26 @@ int growl_tcp_open(const char* server) {
 #endif
 	struct sockaddr_in serv_addr;
 
+	GROWL_LOG_FUNCENTER(  )
 	if( growl_tcp_parse_hostname( server , 23053 , &serv_addr ) == -1 )
 	{
 		return -1;
 	}
 
+    GROWL_LOG( "creating socket" )
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("create socket");
 		return -1;
 	}
 
+    GROWL_LOG( "connect" )
 	if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
 		perror("connect");
 		return -1;
 	}
 
 	on = 1;
+    GROWL_LOG( "setsockopt" )
 	if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == -1) {
 		perror("setsockopt");
 		return -1;
@@ -131,6 +141,7 @@ void growl_tcp_close(int sock) {
 
 int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr )
 {
+	GROWL_LOG_FUNCENTER(  )
 	char *hostname = strdup(server);
 	char *port = strchr( hostname, ':' );
 	struct hostent* host_ent;
@@ -160,6 +171,7 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 
 int growl_tcp_datagram( const char *server , const unsigned char *data , const int data_length )
 {
+	GROWL_LOG_FUNCENTER(  )
 	struct sockaddr_in serv_addr;
 	int sock = 0;
 
@@ -168,12 +180,14 @@ int growl_tcp_datagram( const char *server , const unsigned char *data , const i
 		return -1;
 	}
 	
+    GROWL_LOG( "socket" )
 	sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if( sock < 0 )
 	{
 		return -1;
 	}
 	
+    GROWL_LOG( "sendto" )
 	if( sendto(sock, (char*)data , data_length , 0 , (struct sockaddr*)&serv_addr , sizeof(serv_addr) ) > 0 )
 	{
 		return 0;
