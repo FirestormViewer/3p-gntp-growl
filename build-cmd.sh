@@ -30,7 +30,7 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
             load_vsvars
 
 			cmake . -G "${ND_CMAKE_GENERATOR}"
-            if [ "${AUTOBUILD_ARCH}" == "x64" ]
+            if [ "${ND_AUTOBUILD_ARCH}" == "x64" ]
             then
 				build_sln Project.sln "RelWithDebInfo|x64" growl
 				build_sln Project.sln "RelWithDebInfo|x64" growl++
