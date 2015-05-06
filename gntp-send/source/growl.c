@@ -125,7 +125,6 @@ char *growl_generate_authheader_alloc(const char*const password)
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count ,
 		const char *const password, const char* const icon  )
 {
-	GROWL_LOG_FUNCENTER(  )
 	int sock = -1;
 	int i=0;
 	char *authheader;
@@ -134,6 +133,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	size_t iconsize;
 	uint8_t buffer[1024];
 	
+	GROWL_LOG_FUNCENTER(  )
 	growl_init();
 	authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
@@ -251,7 +251,6 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon)
 {
-	GROWL_LOG_FUNCENTER(  )
 	int sock = -1;
 
 	char *authheader = growl_generate_authheader_alloc(password);
@@ -260,6 +259,7 @@ int growl_tcp_notify( const char *const server,const char *const appname,const c
 	size_t iconsize;
 	uint8_t buffer[1024];
 	
+	GROWL_LOG_FUNCENTER(  )
 	growl_init();
 
 	sock = growl_tcp_open(server);
@@ -366,9 +366,10 @@ leave:
 
 int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
-{		
+{	
+	int rc;
 	GROWL_LOG_FUNCENTER(  )
-	int rc = growl_tcp_register(  server ,  appname ,  (const char **const)&notify , 1 , password, icon  );
+	rc = growl_tcp_register(  server ,  appname ,  (const char **const)&notify , 1 , password, icon  );
 	if( rc == 0 )
 	{
 		rc = growl_tcp_notify( server, appname, notify, title,  message , password, url, icon );
@@ -397,7 +398,6 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
-	GROWL_LOG_FUNCENTER(  )
 	int register_header_length = 22+strlen(appname);
 	unsigned char *data;
 	int pointer = 0;
@@ -412,6 +412,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	uint8_t default_notifications_count = notifications_count;
 	uint8_t j;
 
+	GROWL_LOG_FUNCENTER(  )
 	growl_init();
 
 	for(i=0;i<notifications_count;i++)
@@ -464,7 +465,6 @@ int growl_udp_register( const char *const server , const char *const appname , c
 int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password )
 {
-	GROWL_LOG_FUNCENTER(  )
 	int notify_header_length = 28 + strlen(appname)+strlen(notify)+strlen(message)+strlen(title);
 	unsigned char *data = (unsigned char*)malloc(notify_header_length);
 	int pointer = 0;
@@ -479,6 +479,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	uint16_t title_length = ntohs(strlen(title));
 	uint16_t message_length = ntohs(strlen(message));
 
+	GROWL_LOG_FUNCENTER(  )
 	if (!data) return -1;
 
 	growl_init();
@@ -522,8 +523,9 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {
+	int rc;
 	GROWL_LOG_FUNCENTER(  )
-	int rc = growl_udp_register(  server ,  appname ,  (const char **const)&notify , 1 , password  );
+	rc = growl_udp_register(  server ,  appname ,  (const char **const)&notify , 1 , password  );
 	if( rc == 0 )
 	{
 		rc = growl_udp_notify( server, appname, notify, title,  message , password );

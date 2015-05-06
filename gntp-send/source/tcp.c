@@ -28,13 +28,13 @@ void growl_tcp_write_raw( int sock, const unsigned char * data, const int data_l
 
 void growl_tcp_write( int sock , const char *const format , ... ) 
 {
-	GROWL_LOG_FUNCENTER(  )
 	int length;
 	char *output;
 	char *stop;
 
 	va_list ap;
 
+	GROWL_LOG_FUNCENTER(  )
 	va_start( ap , format );
 	length = vsnprintf( NULL , 0 , format , ap );
 	va_end(ap);
@@ -61,10 +61,10 @@ void growl_tcp_write( int sock , const char *const format , ... )
 }
 
 char *growl_tcp_read(int sock) {
-	GROWL_LOG_FUNCENTER(  )
 	const int growsize = 80;
 	char c = 0;
 	char* line = (char*) malloc(growsize);
+	GROWL_LOG_FUNCENTER(  )
 	if (line) {
 		int len = growsize, pos = 0;
 		char* newline;
@@ -141,10 +141,10 @@ void growl_tcp_close(int sock) {
 
 int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr )
 {
-	GROWL_LOG_FUNCENTER(  )
 	char *hostname = strdup(server);
 	char *port = strchr( hostname, ':' );
 	struct hostent* host_ent;
+	GROWL_LOG_FUNCENTER(  )
 	if( port != NULL )
 	{
 		*port = '\0';
@@ -171,10 +171,10 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 
 int growl_tcp_datagram( const char *server , const unsigned char *data , const int data_length )
 {
-	GROWL_LOG_FUNCENTER(  )
 	struct sockaddr_in serv_addr;
 	int sock = 0;
 
+	GROWL_LOG_FUNCENTER(  )
 	if( growl_tcp_parse_hostname( server , 9887 , &serv_addr ) == -1 )
 	{
 		return -1;
