@@ -13,7 +13,8 @@
 #include "tcp.h"
 #include "growl.h"
 
-#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "growl.c: " ## __FUNCTION__, 2 ); }
+//#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "growl.c: " ## __FUNCTION__, 2 ); }
+#define GROWL_LOG_FUNCENTER( ) /* nothing */
 
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
