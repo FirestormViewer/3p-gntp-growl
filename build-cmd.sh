@@ -52,8 +52,8 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
         "darwin")
             libdir="${stage}/lib"
             mkdir -p "$libdir"/{debug,release}
-            cmake .
-            make
+            MACOSX_DEPLOYMENT_TARGET=10.7 cmake .
+            MACOSX_DEPLOYMENT_TARGET=10.7 make
 
             cp *.dylib "${libdir}/debug"
             cp *.dylib "${libdir}/release"
