@@ -135,7 +135,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	uint8_t buffer[1024];
 	
 	GROWL_LOG_FUNCENTER(  )
-	growl_init();
+	if (growl_init() == -1) goto leave;
 	authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
@@ -261,7 +261,7 @@ int growl_tcp_notify( const char *const server,const char *const appname,const c
 	uint8_t buffer[1024];
 	
 	GROWL_LOG_FUNCENTER(  )
-	growl_init();
+	if (growl_init() == -1) goto leave;
 
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
@@ -414,7 +414,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	uint8_t j;
 
 	GROWL_LOG_FUNCENTER(  )
-	growl_init();
+	if (growl_init() == -1) return -1;
 
 	for(i=0;i<notifications_count;i++)
 	{
@@ -483,7 +483,11 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	GROWL_LOG_FUNCENTER(  )
 	if (!data) return -1;
 
-	growl_init();
+	if (growl_init() == -1)
+	{
+		free(data);
+		return -1;
+	}
 	memset( data , 0 ,  notify_header_length );
 	
 	pointer = 0;
