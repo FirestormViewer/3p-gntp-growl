@@ -17,10 +17,13 @@
 
 int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr  );
 
-//#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "tcp.c: " ## __FUNCTION__, 3 ); }
-//#define GROWL_LOG( Message ) { growl_do_log( "tcp.c: " ## __FUNCTION__ ## ": " ## Message , 3 ); }
+#ifdef _WIN32
+#define GROWL_LOG_FUNCENTER(  ) { growl_do_log( "tcp.c: " ## __FUNCTION__, 3 ); }
+#define GROWL_LOG( Message ) { growl_do_log( "tcp.c: " ## __FUNCTION__ ## ": " ## Message , 3 ); }
+#else
 #define GROWL_LOG_FUNCENTER( ) /* nothing */
 #define GROWL_LOG( Message ) /* nothing */
+#endif
 
 void growl_tcp_write_raw( int sock, const unsigned char * data, const int data_length )
 {
