@@ -63,7 +63,9 @@ void Growl::Register(const char **const notifications, const int notifications_c
 
 Growl::~Growl()
 {
-	if(server != NULL)	
+	growl_shutdown();
+
+	if(server != NULL)
 	{
 		free(server);
 	}
