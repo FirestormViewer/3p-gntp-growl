@@ -24,32 +24,33 @@ set -x
 
 stage="$(pwd)/stage"
 echo "1.0" > "${stage}/VERSION.txt"
+
 pushd "${GNTP_SEND_SOURCE_DIR}"
-    case "$AUTOBUILD_PLATFORM" in
-        "windows")
+    case "${AUTOBUILD_PLATFORM}" in
+        windows*)
             load_vsvars
 
-			cmake . -G "${ND_CMAKE_GENERATOR}"
-            if [ "${ND_AUTOBUILD_ARCH}" == "x64" ]
-            then
-				build_sln Project.sln "RelWithDebInfo|x64" growl
-				build_sln Project.sln "RelWithDebInfo|x64" growl++
-			else
-				build_sln Project.sln "RelWithDebInfo|Win32" growl
-				build_sln Project.sln "RelWithDebInfo|Win32" growl++
-			fi
+            if [ "${AUTOBUILD_WIN_VSPLATFORM}" = "Win32" ] ; then
+              cmake . -G "Visual Studio 12"
+            else
+              cmake . -G "Visual Studio 12 Win64"
+            fi
 
-			mkdir -p "${stage}/lib/debug"
-			mkdir -p "${stage}/lib/release"
+            build_sln Project.sln "RelWithDebInfo|$AUTOBUILD_WIN_VSPLATFORM" growl
+            build_sln Project.sln "RelWithDebInfo|$AUTOBUILD_WIN_VSPLATFORM" growl++
 
-			cp RelWithDebInfo/*.dll "${stage}/lib/debug"
-			cp RelWithDebInfo/*.lib "${stage}/lib/debug"
-#			cp RelWithDebInfo/*.pdb "${stage}/lib/debug"
-			cp RelWithDebInfo/*.dll "${stage}/lib/release"
-			cp RelWithDebInfo/*.lib "${stage}/lib/release"
-#			cp RelWithDebInfo/*.pdb "${stage}/lib/release"
+            mkdir -p "${stage}/lib/debug"
+            mkdir -p "${stage}/lib/release"
+
+            cp RelWithDebInfo/*.dll "${stage}/lib/debug"
+            cp RelWithDebInfo/*.lib "${stage}/lib/debug"
+#           cp RelWithDebInfo/*.pdb "${stage}/lib/debug"
+            cp RelWithDebInfo/*.dll "${stage}/lib/release"
+            cp RelWithDebInfo/*.lib "${stage}/lib/release"
+#           cp RelWithDebInfo/*.pdb "${stage}/lib/release"
         ;;
-        "darwin")
+
+        darwin*)
             libdir="${stage}/lib"
             mkdir -p "$libdir"/{debug,release}
             MACOSX_DEPLOYMENT_TARGET=10.7 cmake .
@@ -58,24 +59,24 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
             cp *.dylib "${libdir}/debug"
             cp *.dylib "${libdir}/release"
 
-			# Ugly, but get rid of static paths
-			install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
-				"${stage}/lib/debug/libgrowl.dylib"
-			install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
-				"${stage}/lib/release/libgrowl.dylib"
-			install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
-				"${stage}/lib/debug/libgrowl++.dylib"
-			install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
-				"${stage}/lib/release/libgrowl++.dylib"
-			install_name_tool -change $(pwd)/libgrowl.dylib \
-				@executable_path/../Resources/libgrowl.dylib \
-				"${stage}/lib/debug/libgrowl++.dylib"
-			install_name_tool -change $(pwd)/libgrowl.dylib \
-				@executable_path/../Resources/libgrowl.dylib \
-				"${stage}/lib/release/libgrowl++.dylib"
+            # Ugly, but get rid of static paths
+            install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/debug/libgrowl.dylib"
+            install_name_tool -id @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/release/libgrowl.dylib"
+            install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
+                "${stage}/lib/debug/libgrowl++.dylib"
+            install_name_tool -id @executable_path/../Resources/libgrowl++.dylib \
+                "${stage}/lib/release/libgrowl++.dylib"
+            install_name_tool -change $(pwd)/libgrowl.dylib \
+                @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/debug/libgrowl++.dylib"
+            install_name_tool -change $(pwd)/libgrowl.dylib \
+                @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/release/libgrowl++.dylib"
         ;;
-			
-        "linux")
+
+        linux*)
         ;;
     esac
 
@@ -84,6 +85,4 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
     mkdir -p "$stage/LICENSES"
     cp LICENSE "$stage/LICENSES/gntp-growl.txt"
 popd
-
-pass
 
