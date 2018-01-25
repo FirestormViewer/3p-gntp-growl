@@ -1,16 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd "$(dirname "$0")"
 
 # turn on verbose debugging output for parabuild logs.
-set -x
+exec 4>&1; export BASH_XTRACEFD=4; set -x
 # make errors fatal
 set -e
+# complain about unset env variables
+set -u
 
 GNTP_SEND_SOURCE_DIR="gntp-send"
 
-if [ -z "$AUTOBUILD" ] ; then 
-    fail
+if [ -z "$AUTOBUILD" ] ; then
+    exit 1
 fi
 
 if [ "$OSTYPE" = "cygwin" ] ; then
