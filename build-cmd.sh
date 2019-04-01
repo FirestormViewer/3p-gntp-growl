@@ -31,13 +31,8 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
     case "${AUTOBUILD_PLATFORM}" in
         windows*)
             load_vsvars
-
-            if [ "${AUTOBUILD_WIN_VSPLATFORM}" = "Win32" ] ; then
-              cmake . -G "Visual Studio 15"
-            else
-              cmake . -G "Visual Studio 15 Win64"
-            fi
-
+            cmake . -G "${AUTOBUILD_WIN_CMAKE_GEN}"
+			
             build_sln Project.sln "RelWithDebInfo|$AUTOBUILD_WIN_VSPLATFORM" growl
             build_sln Project.sln "RelWithDebInfo|$AUTOBUILD_WIN_VSPLATFORM" growl++
 
