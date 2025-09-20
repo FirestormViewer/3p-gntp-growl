@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.6 )
+cmake_minimum_required(VERSION 3.16.0)
 
 option(WITH_STATIC    "Build static growl library"           OFF)
 
@@ -18,7 +18,7 @@ if( WIN32 )
 endif( WIN32 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
+  set(CMAKE_OSX_ARCHITECTURES arm64;x86_64)
 endif()
 
 set( GROWL_NTP_C_SRC
