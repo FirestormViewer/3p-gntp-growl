@@ -71,6 +71,12 @@ pushd "${GNTP_SEND_SOURCE_DIR}"
             install_name_tool -change $(pwd)/libgrowl.dylib \
                 @executable_path/../Resources/libgrowl.dylib \
                 "${stage}/lib/release/libgrowl++.dylib"
+            install_name_tool -change @rpath/libgrowl.dylib \
+                @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/debug/libgrowl++.dylib"
+            install_name_tool -change @rpath/libgrowl.dylib \
+                @executable_path/../Resources/libgrowl.dylib \
+                "${stage}/lib/release/libgrowl++.dylib"
         ;;
 
         linux*)
